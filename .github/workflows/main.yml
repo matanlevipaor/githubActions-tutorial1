@@ -1,0 +1,11 @@
+name: Display Message
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Display Message
+        run: echo "Hi, I am GitHub Action"
