@@ -18,3 +18,28 @@ jobs:
           echo "Repository: $REPO_NAME"
           echo "Commit Hash: $COMMIT_HASH"
           # שליחת המייל באמצעות סקריפט או שירות API
+      
+      - name: Send Email via SendGrid
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          EMAIL: ${{ secrets.EMAIL }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          REPO_NAME: ${{ github.repository }}
+          COMMIT_HASH: ${{ github.sha }}
+        run: |
+          curl --request POST \
+            --url https://api.sendgrid.com/v3/mail/send \
+            --header "Authorization: Bearer $SENDGRID_API_KEY" \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "personalizations": [{
+                "to": [{"email": "'"$EMAIL"'"}]
+              }],
+              "from": {"email": "no-reply@yourdomain.com"},
+              "subject": "GitHub Action Notification",
+              "content": [{
+                "type": "text/plain",
+                "value": "User: '"$GITHUB_ACTOR"'\nRepository: '"$REPO_NAME"'\nCommit Hash: '"$COMMIT_HASH"'"
+              }]
+            }'
+
