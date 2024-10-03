@@ -1,11 +1,33 @@
-name: Display Message
+name: Send Email on Push
 
 on: [push]
 
 jobs:
-  build:
+  send_email:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Display Message
-        run: echo "Hi, I am GitHub Action"
+     
+      - name: Send Email via SendGrid
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          EMAIL: ${{ secrets.EMAIL }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          REPO_NAME: ${{ github.repository }}
+          COMMIT_HASH: ${{ github.sha }}
+        run: |
+          curl --request POST \
+            --url https://api.sendgrid.com/v3/mail/send \
+            --header "Authorization: Bearer $SENDGRID_API_KEY" \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "personalizations": [{
+                "to": [{"email": "'"$EMAIL"'"}]
+              }],
+              "from": {"email": "no-reply@yourdomain.com"},
+              "subject": "GitHub Action Notification",
+              "content": [{
+                "type": "text/plain",
+                "value": "User: '"$GITHUB_ACTOR"'\nRepository: '"$REPO_NAME"'\nCommit Hash: '"$COMMIT_HASH"'"
+              }]
+            }'
