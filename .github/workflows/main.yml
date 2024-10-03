@@ -35,7 +35,7 @@ jobs:
               "personalizations": [{
                 "to": [{"email": "'"$EMAIL"'"}]
               }],
-              "from": {"email": "no-reply@yourdomain.com"},
+              "from": {"email": "paormatan@gmail.com"},
               "subject": "GitHub Action Notification",
               "content": [{
                 "type": "text/plain",
