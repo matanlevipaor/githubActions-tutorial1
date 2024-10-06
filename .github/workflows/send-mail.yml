@@ -19,11 +19,11 @@ jobs:
         echo "host smtp.gmail.com" >> ~/.msmtprc
         echo "port 587" >> ~/.msmtprc
         echo "auth on" >> ~/.msmtprc
-        echo "user ${{ secrets.MAIL_USERNAME }}" >> ~/.msmtprc
+        echo "user $MAIL_USERNAME" >> ~/.msmtprc
         echo "password ${{ secrets.MAIL_PASSWORD }}" >> ~/.msmtprc
         echo "tls on" >> ~/.msmtprc
         echo "tls_trust_file /etc/ssl/certs/ca-certificates.crt" >> ~/.msmtprc
-        echo "from ${{ secrets.MAIL_USERNAME }}" >> ~/.msmtprc
+        echo "from $MAIL_USERNAME" >> ~/.msmtprc
         echo "logfile ~/.msmtp.log" >> ~/.msmtprc
         chmod 600 ~/.msmtprc
  
@@ -32,6 +32,7 @@ jobs:
         GIT_AUTHOR: ${{ github.actor }}
         REPO_NAME: ${{ github.repository }}
         COMMIT_HASH: ${{ github.sha }}
-        TO_EMAIL: ${{ secrets.TO_EMAIL }}
+        MAIL_USERNAME: $MAIL_USERNAME
+        TO_EMAIL: $TO_EMAIL
       run: |
-        echo -e "Subject: GitHub Push Notification\n\nWho pushed the code: $GIT_AUTHOR\nRepository: $REPO_NAME\nCommit hash: $COMMIT_HASH" | msmtp --debug --from=default -t $TO_EMAIL
+        echo -e "From: $MAIL_USERNAME\nTo: $TO_EMAIL\nSubject: GitHub Push Notification\n\nWho pushed the code: $GIT_AUTHOR\nRepository: $REPO_NAME\nCommit hash: $COMMIT_HASH" | msmtp --from=default $TO_EMAIL
