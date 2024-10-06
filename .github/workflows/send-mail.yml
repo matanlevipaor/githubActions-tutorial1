@@ -6,6 +6,10 @@ jobs:
   send-email-job:
     runs-on: ubuntu-latest
  
+    env:
+      MAIL_USERNAME: paormatan@gmail.com  # Replace with your email address
+      TO_EMAIL: darya@sela.co.il  # Replace with the recipient's email address
+ 
     steps:
     - name: Checkout repository content
       uses: actions/checkout@v3
@@ -19,20 +23,14 @@ jobs:
         echo "host smtp.gmail.com" >> ~/.msmtprc
         echo "port 587" >> ~/.msmtprc
         echo "auth on" >> ~/.msmtprc
-        echo "user $MAIL_USERNAME" >> ~/.msmtprc
-        echo "password ${{ secrets.MAIL_PASSWORD }}" >> ~/.msmtprc  # Assuming MAIL_PASSWORD is still a secret
+        echo "user $MAIL_USERNAME" >> ~/.msmtprc    
+        echo "password ${{ secrets.MAIL_PASSWORD }}" >> ~/.msmtprc
         echo "tls on" >> ~/.msmtprc
         echo "tls_trust_file /etc/ssl/certs/ca-certificates.crt" >> ~/.msmtprc
-        echo "from $MAIL_USERNAME" >> ~/.msmtprc
+        echo "from $MAIL_USERNAME" >> ~/.msmtprc     
         echo "logfile ~/.msmtp.log" >> ~/.msmtprc
         chmod 600 ~/.msmtprc
  
     - name: Send Email
-      env:
-        GIT_AUTHOR: ${{ github.actor }}
-        REPO_NAME: ${{ github.repository }}
-        COMMIT_HASH: ${{ github.sha }}
-        MAIL_USERNAME: ${{ vars.MAIL_USERNAME }}  # Access repository variable
-        TO_EMAIL: ${{ vars.TO_EMAIL }}            # Access repository variable
       run: |
-        echo -e "From: $MAIL_USERNAME\nTo: $TO_EMAIL\nSubject: GitHub Push Notification\n\nWho pushed the code: $GIT_AUTHOR\nRepository: $REPO_NAME\nCommit hash: $COMMIT_HASH" | msmtp --from=default --debug $TO_EMAIL
+        echo -e "From: $MAIL_USERNAME\nTo: $TO_EMAIL\nSubject: GitHub Push Notification\n\nWho pushed the code: ${{ github.actor }}\nRepository: ${{ github.repository }}\nCommit hash: ${{ github.sha }}" | msmtp --from=default --debug $TO_EMAIL
