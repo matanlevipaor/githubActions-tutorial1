@@ -8,7 +8,7 @@ jobs:
  
     env:
       MAIL_USERNAME: paormatan@gmail.com  # Replace with your email address
-      TO_EMAIL: darya@sela.co.il  # Replace with the recipient's email address
+      TO_EMAIL: paormatan@gmail.com  # Replace with the recipient's email address
  
     steps:
     - name: Checkout repository content
