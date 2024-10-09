@@ -28,14 +28,14 @@ jobs:
 
       - name: build docker image 
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/githubActions:latest .
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/githubActions:${{ env.BUILD_VERSION }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/github_actions:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/github_actions:${{ env.BUILD_VERSION }} .
         
       
       - name: push docker image 
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/githubActions:latest 
-          docker push ${{ secrets.DOCKER_USERNAME }}/githubActions:${{ env.BUILD_VERSION }} 
+          docker push ${{ secrets.DOCKER_USERNAME }}/github_actions:latest 
+          docker push ${{ secrets.DOCKER_USERNAME }}/github_actions:${{ env.BUILD_VERSION }} 
 
 
 
