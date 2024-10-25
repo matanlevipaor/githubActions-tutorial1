@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    exclude:
+      - "*"
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  imageName: 'my-flask-app'
+  dockerRegistry: 'matanlp/my-flask-app'
+
+steps:
+- task: Docker@2
+  inputs:
+    command: 'buildAndPush'
+    repository: '$(dockerRegistry)'
+    dockerfile: '**/Dockerfile'
+    tags: 'latest'
+    containerRegistry: 'DockerHubServiceConnection' # להגדיר את חיבור השירות ב-DevOps
+
+- script: |
+    docker run -d -p 5000:5000 $(dockerRegistry):latest
+    sleep 10
+  displayName: 'Run Docker Container'
+
+- script: |
+    response=$(curl -s http://localhost:5000)
+    if [[ "$response" == "Hello, matan" ]]; then
+      echo "##vso[task.setvariable variable=PR_COMMENT;]Test succeeded"
+    else
+      echo "##vso[task.setvariable variable=PR_COMMENT;]Test failed"
+      exit 1
+    fi
+  displayName: 'Test Application'
+
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      echo "Adding PR Comment"
+      echo "##vso[task.addAttachment name=COMMENT;]$PR_COMMENT"
+  condition: always()
